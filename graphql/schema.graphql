@@ -1,0 +1,490 @@
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A datetime and timezone string in ISO 8601 format `Y-m-dTH:i:sO`, e.g. `2020-04-20T13:53:12+02:00`."
+scalar DateTimeTz @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTimeTz")
+
+type Query {
+    users: [User!]! @paginate(defaultCount: 10)
+    user(id: ID @eq): User @find
+    GetCategorias:[Categoriacmd!]@field(resolver: "CategoriasGet@categorias_hijo_nieto")
+
+    GetProductos(number_paginate:Int,page:Int,type:Int):GetProductos!@field(resolver: "Productos@getProductos") 
+    GetProductoID(id_producto:String):Producto!@field(resolver: "Productos@getProductoID")
+
+    GetProductosRelacionadosCategoria(slug:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
+    GetProductosRelacionadosCategoria01(slug:String,slug1:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
+    GetProductosRelacionadosCategoria02(slug:String,slug1:String,slug2:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
+    
+    GetProductoPalabraClave(palabraClave:String,number_paginate:Int,page:Int):GetProductos@field(resolver: "Productos@BusquedaProductosSeisCampos")
+    GetFiltrosPalabraClave(palabraClave:String):Filtros@field(resolver: "Productos@FiltrosDePalabraClave")
+    GetProductoSlug(slug:String,number_paginate:Int,page:Int):GetProductosSlug @field(resolver: "Productos@getProductoSlug")
+    GetProductosIdRelacionado(slug:String,number_paginate:Int,page:Int):GetProductosSlug@field(resolver: "Productos@getProductosSlugRelacionados")
+    GetBusquedaAvansada(precio:[Float!],marca:String,categoria:[CategoriaBusqueda!],cicloMensual:String,
+                        granaje:String,formato:String,velocidadBN:String,
+                        velocidadColor:String,number_paginate:Int,page:Int):ProductosBusquedaAvansa @field(resolver: "Productos@BusquedaAvansada")
+
+    GetDepartamentos:[Departamentos!]@field(resolver: "Localizacion@GetDepartamentos")
+    GetProvincias(DepCode:String):[Provincias!]@field(resolver: "Localizacion@GetProvincias")
+    GetDistritos(DepCode:String,ProCode:String):[Distritos!]@field(resolver: "Localizacion@GetDistritos")
+
+    GetCategoriasBusqueda(slug:String,slug1:String,slug2:String):[Categoria01]@field(resolver: "CategoriasGet@Categoria_Busqueda")
+    GetGramaje(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@gramajes")
+    GetVelocidadBN(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@VelocidadBN")
+    GetVelocidadColor(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@VelocidadColor")
+    CicloMensual(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@CicloMensual")
+    Marcas(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@Marcas")
+    Precios(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@Precios")
+    Formatos(slug:String,slug1:String,slug2:String):[String!]@field(resolver: "CategoriasGet@Formatos")
+
+    GetClientePedidos(number_paginate:Int,page:Int):PedidoCliente @field(resolver: "ClientePedidos@ClientePedidos")
+    GetClienteDetalleDocEntry(DocEntry:Float):Pedidos @field(resolver: "ClientePedidos@ClientesDetalleDocEntry")
+
+    GetClienteIDPedido:[Pedidos!] @field(resolver: "ClientePedidos@ClienteIdPedido")
+    @middleware(checks: ["auth:api"])
+
+    GetDetallePedido(DocEntry:String):[DetallePedido!] @field(resolver: "ClientePedidos@PedidosDetalle")
+
+    GetDireccionPedido(CardCode:String):[TipoEntrega!]@field(resolver: "ClientePedidos@DireccionPedido")
+
+    GetEstadoPago:[EstadoPago!]@field(resolver: "ClientePedidos@EstadoPago")
+    GetBancos:[Bancos!]@field(resolver: "ClientePedidos@Bancos")
+
+    GetTarifas:[Tarifa!] @field(resolver: "Fletes@getTarifas")
+    GetSedes:[Sedes!] @field(resolver: "Fletes@Sedes")
+    GetProvinciasAgencias(Id_Departamento:String):[Agencia!] @field(resolver: "Fletes@DepartamentosAgenciasSedes")
+    GetAgencias(Id_Departamento:String,Id_Provincia:String):[Agencia!] @field(resolver: "Fletes@getAgencias")
+    GetTarifaFleteTotal(input:[DetallePedidoInput!],Id_Departamento:String,Id_Provincia:String):Float @field(resolver: "Fletes@GetPrecioTotalFlete")
+
+    GetBanco(id_banco:String):Banks @field(resolver: "ClientePedidos@GetBanco")
+}
+type Banks{
+    BankCode:String
+    Account:String
+    AcctName:String
+    CurrCode:String
+    SwiftNum:String
+}
+type Filtros{
+    gramajes:[String!]
+    velocidadBN:[String!]
+    velocidadColor:[String!]
+    cicloMensual:[String!]
+    marcas:[String!]
+    precios:[String!]
+    formatos:[String!]
+}
+type Sedes{
+    Id:ID
+    DesSed:String
+    DirSed:String
+    CiuSed:String
+}
+type Agencia{
+    DepCode_Des:String
+    DepDes_Des:String
+    ProCode_Des:String
+    ProDes_Des:String
+    AgeCode:String
+    AgeDes:String
+    AgeDir:String
+    Precio:Float
+}
+type Tarifa{
+    id:ID
+    Descripcion:String
+    Valor:String
+}
+type Precios{
+    Minimo:Float
+    Maximo:Float
+}
+type EstadoPago{
+    Id:ID
+    Descripcion:String
+}
+type Bancos{
+    BankCode:String
+    BankName:String
+}
+input PedidosInput{
+    DocEntry:String
+    CardCode:String
+    DocCur:String
+    DocDate:String
+    DocTotal:Float
+    CMD_MetPag:Int
+    BankCode:String
+    TransDate:Date
+    RefNum:String
+    Id_EstPed:Int
+    CMD_FecExpPE:DateTimeTz
+    OINV_Address:String
+    ODLN_Address:String
+    data:[DetallePedidoInput!]
+}
+type Pagos{
+    cip:String
+    currency:String
+    amount:String
+    transactionCode:String
+    dateExpiry:String
+    cipUrl:String
+}
+type Pedidos{
+    DocEntry:String
+    CardCode:String
+    DocCur:String
+    DocDate:String
+    DocTotal:String
+    CMD_MetPag:Int
+    BankCode:String
+    TransDate:DateTime
+    RefNum:String
+    Id_EstPed:Int
+    Total_Flete:Float
+    OINV_Address:String
+    ODLN_Address:String
+    CMD_FecExpPE:DateTime
+    data:[DetallePedido!]
+    data1:Clientes
+    Pagos:Pagos
+}
+input DetallePedidoInput{
+    DocEntry:String
+    ItemCode:String
+    Quantity:Float
+    Price:Float
+}
+type DetallePedido{
+    DocEntry:String
+    ItemCode:String
+    Quantity:Float
+    Price:Float
+    
+    DESCRIPCION:String
+    ESCALA:String
+    ItemPrice01:Float
+    ItemPrice02:Float
+    OnHand:Int
+    STATESTOCK:String
+    GRUPO_SAP:String
+    PESO:String
+    ANCHO:String
+    LARGO:String
+    ALTO:String
+    HISTORICO_NUMERO_PARTE:String
+    ULTIMO_NRO_PARTE:String
+    IMAGEN_01:String
+    IMAGEN_02:String
+    IMAGEN_03:String
+    IMAGEN_04:String
+    IMAGEN_05:String
+    COLOR_ITEM:String
+    MARCA:String
+    RUTA_FICHA_TECNICA:String
+    RUTA_YOUTUBE:String
+    DESCRIPCION_AMPLIA:String
+    RESUMEN_FICHA_TECNICA:String
+    FT_Detalle1:String
+    FT_Detalle2:String
+    FT_Detalle3:String
+    FT_Detalle4:String
+    FT_Detalle5:String
+    FT_Detalle6:String
+    FT_Detalle7:String
+    FT_Detalle8:String
+    FT_Detalle9:String
+    FT_Detalle10:String
+    FT_Detalle11:String
+    ID_CATEGORIA:String
+    DESCRIPCION_CATEGORIA:String
+    ID_SUBCATEGORIA_01:String
+    DESCRIPCION_SUBCATEGORIA_01:String
+    ID_SUBCATEGORIA_02:String
+    DESCRIPCION_SUBCATEGORIA_02:String
+    MODELO:String
+    Velocidad_BN_Pag_Min:String
+    Velocidad_Color_Pag_Min:String
+    Ciclo_Mensual:String
+    Gramaje:String
+    Formato_A3:String
+    Formato_A4:String
+    Formato_A1:String
+    Formato_A0:String
+    Slug:String
+    CMD_HoPaEf:Int
+
+}
+type PedidoCliente{
+   NroItems:Int
+   data:[Pedidos] 
+}
+type ClientePedido{
+    NroItems:Int
+    data:[Clientes!]
+}
+type Clientes{
+    CardCode:String
+    CardName:String
+    LicTradNum:String
+    U_BPP_BPTP:String
+    U_BPP_BPTD:String
+    U_BPP_BPAP:String
+    U_BPP_BPAM:String
+    U_BPP_BPNO:String
+    E_Mail:String
+    Phone1:String
+    Phone2:String
+    Cellular:String
+    data:[TipoEntrega!]
+    data1:[Pedidos!]
+}
+type TipoEntrega{
+    CardCode:String
+    Address:String
+    Country:String
+    Direccion:String
+    Id_Departamento:String
+    Departamento:String
+    Id_Provincia:String
+    Provincia:String
+    Id_Distrito:String
+    Distrito:String
+    AdresType:String
+}
+input TipoEntregaInput{
+    CardCode:String
+    Address:String
+    Country:String
+    Direccion:String
+    Id_Provincia:String
+    Id_Departamento:String
+    Id_Distrito:String
+    AdresType:String
+}
+input TipoEntregaEnvioInput{
+    CardCodeEnvio:String
+    AddressEnvio:String
+    CountryEnvio:String
+    DireccionEnvio:String
+    Id_ProvinciaEnvio:String
+    Id_DepartamentoEnvio:String
+    Id_DistritoEnvio:String
+    AdresTypeEnvio:String
+    AgeCode:String
+    AgeDes:String
+    AgeDir:String
+    Sede:String
+    Precio:Float
+}
+type ProductosBusquedaAvansa{
+    NroItems:Int
+    data:[Producto!]
+}
+type CategoriaPadreHijoNieto{
+    NroItems:Int
+    data:[Producto!]
+}
+input CategoriaBusqueda{
+    categoria:String
+    categoria01:String
+    categoria02:[String!]
+}
+type GetProductos{
+    NroItems:Float
+    data:[Producto!]
+}
+type GetProductosSlug{
+    NroItems:Int
+    data:[Producto!]
+    
+}
+type Departamentos{
+    Code:String
+    Name:String
+}
+type Provincias{
+    DepCode:String
+    Code:String
+    Name:String
+}
+type Distritos{
+    DepCode:String
+    ProCode:String
+    Code:String
+    Name:String
+}
+type Producto{
+    ID_PRODUCTO:String
+    DESCRIPCION:String
+    ESCALA:String
+    ItemPrice01:Float
+    ItemPrice02:Float
+    OnHand:Int
+    STATESTOCK:String
+    GRUPO_SAP:String
+    PESO:String
+    ANCHO:String
+    LARGO:String
+    ALTO:String
+    HISTORICO_NUMERO_PARTE:String
+    ULTIMO_NRO_PARTE:String
+    IMAGEN_01:String
+    IMAGEN_02:String
+    IMAGEN_03:String
+    IMAGEN_04:String
+    IMAGEN_05:String
+    COLOR_ITEM:String
+    MARCA:String
+    RUTA_FICHA_TECNICA:String
+    RUTA_YOUTUBE:String
+    DESCRIPCION_AMPLIA:String
+    RESUMEN_FICHA_TECNICA:String
+    FT_Detalle1:String
+    FT_Detalle2:String
+    FT_Detalle3:String
+    FT_Detalle4:String
+    FT_Detalle5:String
+    FT_Detalle6:String
+    FT_Detalle7:String
+    FT_Detalle8:String
+    FT_Detalle9:String
+    FT_Detalle10:String
+    FT_Detalle11:String
+    ID_CATEGORIA:String
+    DESCRIPCION_CATEGORIA:String
+    ID_SUBCATEGORIA_01:String
+    SlugCategoria:String
+    DESCRIPCION_SUBCATEGORIA_01:String
+    ID_SUBCATEGORIA_02:String
+    SlugCategoria01:String
+    DESCRIPCION_SUBCATEGORIA_02:String
+    SlugCategoria02:String
+    MODELO:String
+    Velocidad_BN_Pag_Min:String
+    Velocidad_Color_Pag_Min:String
+    Ciclo_Mensual:String
+    Gramaje:String
+    Formato_A3:String
+    Formato_A4:String
+    Formato_A1:String
+    Formato_A0:String
+    CMD_Carrito_Sinonimo_01:String
+    CMD_Carrito_Sinonimo_02:String
+    slug:String
+    CMD_HoPaEf:Int
+}
+
+type Categoriacmd{
+    U_CMD_IdCate:String
+    U_CMD_DesCat:String
+    SlugCat:String
+    data:[Categoria01!]
+}
+type Categoria01{
+    U_CMD_IdCate:String
+    U_CMD_IdSuCa01:String
+    U_CMD_DeSuCa01:String
+    SlugCa01:String
+    data:[Categoria02!]
+}
+type Categoria02{
+    U_CMD_IdCate:String
+    U_CMD_IdSuCa01:String
+    U_CMD_IdSuCa02:String
+    U_CMD_DeSuCa02:String
+    SlugCa02:String
+}
+type Contacto {
+    typeContact: Float!
+    name: String!
+    dni: Float
+    ruc: Float
+    email: String!
+    phone:Float!
+    schedule:String!
+    subject:String!
+    bodyMessage:String! 
+}
+type User {
+    CardCode: String
+    CardName: String
+    LicTradNum: String
+    U_BPP_BPTP:String
+    U_BPP_BPTD:Int
+    U_BPP_BPAP:String
+    U_BPP_BPAM:String
+    U_BPP_BPNO:String
+    E_Mail:String
+    Phone1:String
+    Phone2:String
+    Cellular:String
+    Password:String
+    apitoken:String
+    typeUser:Int
+}
+input UserInput{
+    LicTradNum: String
+    U_BPP_BPTP:String
+    U_BPP_BPTD:Int
+    U_BPP_BPAP:String
+    U_BPP_BPAM:String
+    U_BPP_BPNO:String
+    E_Mail:String
+    Phone1:String
+    Phone2:String
+    Cellular:String
+    Password:String
+}
+
+
+type Mutation {
+    ForgotPassword(
+        input:UserInput! @spread
+    ):String @field(resolver: "AuthMutator@FogotPassword")
+
+    updateDirecciones(
+        input:TipoEntregaInput! @spread
+    ):TipoEntrega @field(resolver: "Pedidos@UpdateDireccion")
+    @middleware(checks: ["auth:api"])
+
+    updateEstadoPedido(
+        input:PedidosInput! @spread
+    ):Pedidos @field(resolver: "Pedidos@UpdateEstado")
+    @middleware(checks: ["auth:api"])
+
+    CrearPedido(
+        input:PedidosInput! @spread
+        input2:TipoEntregaInput! @spread
+        input3:TipoEntregaEnvioInput! @spread
+    ): Pedidos @field(resolver: "Pedidos@RegistrarPedido")
+    @middleware(checks: ["auth:api"])
+    
+    Login(
+        input:UserInput! @spread
+    ): User @field(resolver: "AuthMutator@Login")
+    
+    UpdateUsers(
+        input:UserInput! @spread
+    ):User @field(resolver: "AuthMutator@UpdateUsuario")
+    @middleware(checks: ["auth:api"])
+
+    CreateUsers(
+        input:UserInput! @spread
+    ):User @field(resolver: "AuthMutator@CrearUsuarios")
+
+    Contacto(typeContact:Float!,
+    name: String!,
+    ruc: Float,
+    dni: Float,
+    email: String!,
+    phone:Float!,
+    schedule:String!,
+    subject:String!,
+    bodyMessage:String!,
+    ): Contacto!
+}
