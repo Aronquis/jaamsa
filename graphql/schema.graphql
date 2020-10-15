@@ -117,9 +117,11 @@ input PedidosInput{
     DocDate:String
     DocTotal:Float
     CMD_MetPag:Int
+    CMD_TipEnt:String
     BankCode:String
     TransDate:Date
     RefNum:String
+    
     Id_EstPed:Int
     CMD_FecExpPE:DateTimeTz
     OINV_Address:String
@@ -148,7 +150,9 @@ type Pedidos{
     Total_Flete:Float
     OINV_Address:String
     ODLN_Address:String
+    CMD_TipEnt:String
     CMD_FecExpPE:DateTime
+    url_pagoefectivo:String
     data:[DetallePedido!]
     data1:Clientes
     Pagos:Pagos

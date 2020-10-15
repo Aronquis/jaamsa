@@ -116,6 +116,7 @@ class Pedidos
                 'DocCur'=>$pedidos->DocCur,
                 'DocDate'=>$pedidos->DocDate,
                 'DocTotal'=>$pedidos->DocTotal,
+                'CMD_TipEnt'=>$pedidos->CMD_TipEnt,
                 'CMD_MetPag'=>$pedidos->CMD_MetPag,
                 'BankCode'=>$pedidos->BankCode,
                 'TransDate'=>$pedidos->TransDate,
@@ -139,6 +140,7 @@ class Pedidos
                 'DocCur'=>$pedidos->DocCur,
                 'DocDate'=>$pedidos->DocDate,
                 'DocTotal'=>$pedidos->DocTotal,
+                'CMD_TipEnt'=>$pedidos->CMD_TipEnt,
                 'CMD_MetPag'=>$pedidos->CMD_MetPag,
                 'BankCode'=>$pedidos->BankCode,
                 'TransDate'=>$pedidos->TransDate,
@@ -153,6 +155,7 @@ class Pedidos
     }
     public function RegistrarPedido($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
+       
         // TODO implement the resolver
         $Bearer=$context->request->headers->get('authorization');
         $token=substr($Bearer,7);
@@ -290,14 +293,23 @@ class Pedidos
             DB::table('cmd_ordr')
                 ->insert([
                     'DocEntry'=>@$ultimoRegistro+1,'CardCode'=>@$CardCode,'DocCur'=>@$args['DocCur'],'DocDate'=>@$args['DocDate'],
-                    'DocTotal'=>@$Total,'CMD_MetPag'=>@$args['CMD_MetPag'],'BankCode'=>@$args['BankCode'],'TransDate'=>@$args['TransDate'],
+                    'DocTotal'=>@$Total,'CMD_MetPag'=>@$args['CMD_MetPag'],'CMD_TipEnt'=>@$args['CMD_TipEnt'],'BankCode'=>@$args['BankCode'],'TransDate'=>@$args['TransDate'],
                     'RefNum'=>@$args['RefNum'],'OINV_Address'=>$OINV_Address,'ODLN_Address'=>$ODLN_Address,'Id_EstPed'=>@$args['Id_EstPed'],
                     'CMD_FecExpPE'=>date('Y-m-d H:i:s',strtotime(@$args['CMD_FecExpPE'])),'Total_Flete'=>@$args['Precio']
             ]);
             foreach($args['data'] as $detallePedido){
+                
                 DB::table('cmd_rdr1')
                 ->insert(['DocEntry'=>@$ultimoRegistro+1,'ItemCode'=>@$detallePedido['ItemCode'],
                 'Quantity'=>(Int)@$detallePedido['Quantity'],'Price'=>(Float)@$totalPrecio['Price']
+                ]);
+
+                $producto_recu=DB::table('cmd_itm1')->where('ItemCode',@$detallePedido['ItemCode'])->first();
+                $actualizar_stock=(Int)$producto_recu->OnHand-(Float)@$detallePedido['Quantity'];
+                DB::table('cmd_itm1')
+                    ->where('ItemCode',@$detallePedido['ItemCode'])
+                    ->update([
+                        'OnHand'=>$actualizar_stock,
                 ]);
             }
         }
@@ -333,101 +345,101 @@ class Pedidos
                 $tipo_documento="NAN"; 
                 break;
         }
-        /////
-        /*
-        Mail::send('mensajePedido.index',['usuario'=>$usuario,
-                                            'pedido'=>$pedido,'detalle_pedido'=>$detalle_pedido], function($message) use ($email) {
-            $message->to([$email,'diotero123@gmail.com'])->subject
-               ('Pedido Realizado');
-            $message->from('jaamsa@jaamsa.com');
-         });*/
          
          Mail::send('mensajePedido.index',['usuario'=>$usuario,
                                             'direccion'=>$direccion,'agencia'=>$agencia,'pedido'=>$pedido,'detalle_pedido'=>$detalle_pedido], function($message) use ($email,$ultimoRegistro) {
-            $message->to([$email,'postventa@jaamsaonline.com'])->subject
+            $message->to([$email,'postventa@jaamsa.com'])->subject
                ('Confirmacion de pedido #'.($ultimoRegistro+1));
-            $message->from('postventa@jaamsaonline.com');
+            $message->from('postventa@jaamsa.com');
          });
         //////pasarela de pagos
-        date_default_timezone_set('America/Lima');
-        $ruta="https://pre1a.services.pagoefectivo.pe/v1/authorizations";
-        $data = array(
-            "accessKey"=>"YjY1NDU3OTVkOGQ4MDA1",
-            "secretKey" =>'71MMzwDOVs7kxXH+j5zjkkKPxB+fv/Q1zaBcUPMF',
-            "idService"=>"1185",
-            "dateRequest"=>date('c'),
-            "hashString"=>hash('sha256',"1185".".YjY1NDU3OTVkOGQ4MDA1".'.71MMzwDOVs7kxXH+j5zjkkKPxB+fv/Q1zaBcUPMF.'.date('c'))
-        );
-        $data_json = json_encode($data);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $ruta);
-        curl_setopt(
-            $ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            )
-        );
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $respuesta  = curl_exec($ch);
-        curl_close($ch);
-        $leer_respuesta = json_decode($respuesta, true);
-        if (isset($leer_respuesta['errors'])) {
-            @$pedido->Pagos=$leer_respuesta['errors'];
-        } else {
-            ////SEGUNDA API ////
-            $ruta2="https://pre1a.services.pagoefectivo.pe/v1/cips";
-            $data2 = array(
-                "currency"=> "PEN",
-                "amount"=>number_format((Float)@$pedido->DocTotal + (Float)@$args['Precio'], 2, '.', ''),
-                "transactionCode"=> @$pedido->DocEntry,
-                "adminEmail"=> "postventa@jaamsaonline.com.pe",
-                "dateExpiry"=> @$args['CMD_FecExpPE'],
-                "paymentConcept"=> "Venta",
-                "additionalData"=> "Venta",
-                "userEmail"=> @$usuario->E_Mail,
-                "userId"=> @$usuario->CardCode,
-                "userName"=> @$usuario->U_BPP_BPNO,
-                "userLastName"=> @$usuario->U_BPP_BPAP.' '.@$usuario->U_BPP_BPAM,
-                "userUbigeo"=> $args['Id_DepartamentoEnvio'].$args['Id_ProvinciaEnvio'].$args['Id_DistritoEnvio'], 
-                "userCountry"=> "PERU",
-                "userDocumentType"=> $tipo_documento,
-                "userDocumentNumber"=> @$usuario->LicTradNum,
-                "userCodeCountry" => "+51",
-                "userPhone" => @$usuario->Phone1,
-                "serviceId"=> 1185
+        if($args['CMD_MetPag']==3){
+            date_default_timezone_set('America/Lima');
+            $ruta="https://pre1a.services.pagoefectivo.pe/v1/authorizations";
+            $data = array(
+                "accessKey"=>"YjY1NDU3OTVkOGQ4MDA1",
+                "secretKey" =>'71MMzwDOVs7kxXH+j5zjkkKPxB+fv/Q1zaBcUPMF',
+                "idService"=>"1185",
+                "dateRequest"=>date('c'),
+                "hashString"=>hash('sha256',"1185".".YjY1NDU3OTVkOGQ4MDA1".'.71MMzwDOVs7kxXH+j5zjkkKPxB+fv/Q1zaBcUPMF.'.date('c'))
             );
-            $data_json2 = json_encode($data2);
-            $ch2 = curl_init();
-            curl_setopt($ch2, CURLOPT_URL, $ruta2);
+            $data_json = json_encode($data);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $ruta);
             curl_setopt(
-                $ch2, CURLOPT_HTTPHEADER, array(
-                    'Authorization: Bearer '.$leer_respuesta['data']['token'],
-                    'Origin: web',
-                    'Accept-Language: es-PE',
-                    'Content-Type: application/json',
+                $ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
                 )
             );
-            curl_setopt($ch2, CURLOPT_POST, 1);
-            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch2, CURLOPT_POSTFIELDS,$data_json2);
-            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-            $respuesta2  = curl_exec($ch2);
-            curl_close($ch2);
-            $leer_respuesta2 = json_decode($respuesta2, true);
-            
-            if (isset($leer_respuesta2['errors'])) {
-                @$pedido->Pagos=@$leer_respuesta2['errors'];
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POSTFIELDS,$data_json);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $respuesta  = curl_exec($ch);
+            curl_close($ch);
+            $leer_respuesta = json_decode($respuesta, true);
+            if (isset($leer_respuesta['errors'])) {
+                @$pedido->Pagos=$leer_respuesta['errors'];
+            } else {
+                ////SEGUNDA API ////
+                $ruta2="https://pre1a.services.pagoefectivo.pe/v1/cips";
+                $data2 = array(
+                    "currency"=> "PEN",
+                    "amount"=>number_format((Float)@$pedido->DocTotal + (Float)@$args['Precio'], 2, '.', ''),
+                    "transactionCode"=> @$pedido->DocEntry,
+                    "adminEmail"=> "postventa@jaamsaonline.com.pe",
+                    "dateExpiry"=> (String)@$args['CMD_FecExpPE'],
+                    "paymentConcept"=> "Venta",
+                    "additionalData"=> "Venta",
+                    "userEmail"=> @$usuario->E_Mail,
+                    "userId"=> @$usuario->CardCode,
+                    "userName"=> @$usuario->U_BPP_BPNO,
+                    "userLastName"=> @$usuario->U_BPP_BPAP.' '.@$usuario->U_BPP_BPAM,
+                    "userUbigeo"=> $args['Id_DepartamentoEnvio'].$args['Id_ProvinciaEnvio'].$args['Id_DistritoEnvio'], 
+                    "userCountry"=> "PERU",
+                    "userDocumentType"=> $tipo_documento,
+                    "userDocumentNumber"=> @$usuario->LicTradNum,
+                    "userCodeCountry" => "+51",
+                    "userPhone" => @$usuario->Phone1,
+                    "serviceId"=> 1185
+                );
+                $data_json2 = json_encode($data2);
+                $ch2 = curl_init();
+                curl_setopt($ch2, CURLOPT_URL, $ruta2);
+                curl_setopt(
+                    $ch2, CURLOPT_HTTPHEADER, array(
+                        'Authorization: Bearer '.$leer_respuesta['data']['token'],
+                        'Origin: web',
+                        'Accept-Language: es-PE',
+                        'Content-Type: application/json',
+                    )
+                );
+                curl_setopt($ch2, CURLOPT_POST, 1);
+                curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch2, CURLOPT_POSTFIELDS,$data_json2);
+                curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+                $respuesta2  = curl_exec($ch2);
+                curl_close($ch2);
+                $leer_respuesta2 = json_decode($respuesta2, true);
+                
+                if (isset($leer_respuesta2['errors'])) {
+                    @$pedido->Pagos=@$leer_respuesta2['errors'];
+                }
+                else{
+                    DB::table('cmd_ordr')->where('DocEntry',$ultimoRegistro+1)->update([
+                    'RefNum'=>@$leer_respuesta2['data']['cip'],
+                    'url_pagoefectivo'=>$leer_respuesta2['data']['cipUrl']
+                    ]);       
+                    @$pedido->Pagos=@$leer_respuesta2['data'];
+                }
+                //////
             }
-            else{
-                DB::table('cmd_ordr')->where('DocEntry',$ultimoRegistro+1)->update([
-                'RefNum'=>@$leer_respuesta2['data']['cip']
-                ]);       
-                @$pedido->Pagos=@$leer_respuesta2['data'];
-            }
-            //////
+            return  $pedido;
         }
-        return  $pedido;
+        else{
+            return  $pedido;
+        }
+        
+        
     }
 }

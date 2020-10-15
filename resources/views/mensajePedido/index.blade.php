@@ -157,9 +157,30 @@
                 <td width="15%">Metodo pago:</td>
                 @if(@$pedido->CMD_MetPag==1)
                 <td width="10%" class="linea"><span class="text">TRANSFERENCIA</span></td>
-                @else
+                @endif
+                @if(@$pedido->CMD_MetPag==2)
                 <td width="10%" class="linea"><span class="text">TARGETA DEBITO</span></td>
                 @endif
+                @if(@$pedido->CMD_MetPag==3)
+                <td width="10%" class="linea"><span class="text">PAGOEFECTIVO</span></td>
+                @endif
+                <td width="75%"></td>
+            </tr>
+            <tr>
+                <td width="15%">Tipo Envio:</td>
+                @php
+                switch(@$pedido->CMD_TipEnt){
+                    case 1:
+                        print_r('<td width="10%" class="linea"><span class="text">Envio a Domicilio</span></td>');
+                    break;
+                    case 2:
+                        print_r('<td width="10%" class="linea"><span class="text">Envio a Agencia</span></td>');
+                    break;
+                    case 3:
+                        print_r('<td width="10%" class="linea"><span class="text">Recojo en Tienda</span></td>');
+                    break;
+                }   
+                @endphp
                 <td width="75%"></td>
             </tr>
             <tr>

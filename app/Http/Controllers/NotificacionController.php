@@ -21,7 +21,8 @@ class NotificacionController extends Controller
                 $id_pedido=$transCode['transactionCode'];
                 
                 @$pedido=DB::table('cmd_ordr')->where('DocEntry',$id_pedido)->first();
-                if(isset($pedido->DocEntry)==true && $token==$hashString){
+                #falta validar esto && $token==$hashString
+                if(isset($pedido->DocEntry)==true ){
                     DB::table('cmd_ordr')->where('DocEntry',$id_pedido)->update([
                         'Id_EstPed'=>2,
                         'TransDate'=>date('Y-m-d H:i:s',strtotime($fecha_pago))

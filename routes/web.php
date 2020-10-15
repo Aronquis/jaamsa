@@ -19,19 +19,21 @@ Route::get('/', function () {
     //$usuario=DB::table('cmd_ocrds')->where('CardCode','C48331424')->first();
 
     //return response()->view('mensaje.mensajeBienvenida',['usuario'=>$usuario], 200);
+    
     //$usuario=DB::table('cmd_ocrds')->where('CardCode','C72641188')->first();
     //@$pedido=DB::table('cmd_ordr')->where('DocEntry',98246)->first();
     //return response()->view('mensajePedido.mensaje',['usuario'=>$usuario,'pedido'=>$pedido], 200);
-    /*
+    
     $usuario=DB::table('cmd_ocrds')->where('CardCode','C72641188')->first();
-    @$pedido=DB::table('cmd_ordr')->where('DocEntry',98246)->first();
+    @$pedido=DB::table('cmd_ordr')->where('DocEntry',98811)->first();
     $detalle_pedido=DB::table('cmd_rdr1')
                 ->join('cmd_carrito_consolidado','cmd_rdr1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
                 ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_rdr1.ItemCode')
                 ->where('DocEntry',$pedido->DocEntry)->get();
     return response()->view('mensajePedido.index',['usuario'=>$usuario,'pedido'=>$pedido,'detalle_pedido'=>$detalle_pedido], 200);
     
-    return view('welcome');*/
+    //return view('welcome');
+    /*
     date_default_timezone_set('America/Lima');
     $ruta="https://pre1a.services.pagoefectivo.pe/v1/authorizations";
     $data = array(
@@ -107,5 +109,7 @@ Route::get('/', function () {
             return  $leer_respuesta2;
         }
         //////
+        
     }
+    */
 });
