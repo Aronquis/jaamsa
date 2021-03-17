@@ -159,7 +159,7 @@
                 <td width="10%" class="linea"><span class="text">TRANSFERENCIA</span></td>
                 @endif
                 @if(@$pedido->CMD_MetPag==2)
-                <td width="10%" class="linea"><span class="text">TARGETA DEBITO</span></td>
+                <td width="10%" class="linea"><span class="text">TARJETA DEBITO</span></td>
                 @endif
                 @if(@$pedido->CMD_MetPag==3)
                 <td width="10%" class="linea"><span class="text">PAGOEFECTIVO</span></td>

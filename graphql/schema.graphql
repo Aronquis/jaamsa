@@ -60,6 +60,13 @@ type Query {
     GetTarifaFleteTotal(input:[DetallePedidoInput!],Id_Departamento:String,Id_Provincia:String):Float @field(resolver: "Fletes@GetPrecioTotalFlete")
 
     GetBanco(id_banco:String):Banks @field(resolver: "ClientePedidos@GetBanco")
+
+    #banner
+    GetAllBanners:[banners!] @field(resolver: "Banners@GetAllBanners")
+    GetIdBanner(Id:Int):banners @field(resolver: "Banners@GetIdBanners")
+
+    #parametros
+    GetAllParametros:[parametros!] @field(resolver: "Parametros@GetAllParametros")
 }
 type Banks{
     BankCode:String
@@ -116,6 +123,8 @@ input PedidosInput{
     DocCur:String
     DocDate:String
     DocTotal:Float
+    CMD_Movil:String
+    CMD_Comments:String
     CMD_MetPag:Int
     CMD_TipEnt:String
     BankCode:String
@@ -143,6 +152,8 @@ type Pedidos{
     DocDate:String
     DocTotal:String
     CMD_MetPag:Int
+    CMD_Movil:String
+    CMD_Comments:String
     BankCode:String
     TransDate:DateTime
     RefNum:String
@@ -179,6 +190,7 @@ type DetallePedido{
     PESO:String
     ANCHO:String
     LARGO:String
+    CMD_TipPro:Int
     ALTO:String
     HISTORICO_NUMERO_PARTE:String
     ULTIMO_NRO_PARTE:String
@@ -335,6 +347,7 @@ type Producto{
     ANCHO:String
     LARGO:String
     ALTO:String
+    CMD_TipPro:Int
     HISTORICO_NUMERO_PARTE:String
     ULTIMO_NRO_PARTE:String
     IMAGEN_01:String
@@ -444,9 +457,44 @@ input UserInput{
     Cellular:String
     Password:String
 }
-
-
+type banners{
+    Id:ID
+    Nombre:String
+    BannerUrl:String
+    Link:String
+    TipoLink:Int
+}
+input bannersInput{
+    Id:ID
+    Nombre:String
+    BannerUrl:String
+    Link:String
+    TipoLink:Int
+}
+type parametros{
+    id:Int
+    Descripcion:String
+    Valor:String
+}
+input parametrosInput{
+    id:Int
+    Valor:String
+}
 type Mutation {
+    UpdateParametros(
+        input:parametrosInput! @spread
+    ):parametros @field(resolver: "CrudParametros@Update")
+
+    CreateBanner(
+        input:bannersInput! @spread
+    ):banners @field(resolver: "CrudBanners@Create")
+    UpdateBanner(
+        input:bannersInput! @spread
+    ):banners @field(resolver: "CrudBanners@Update")
+    DeleteBanner(
+        input:bannersInput! @spread
+    ):String @field(resolver: "CrudBanners@Delete")
+
     ForgotPassword(
         input:UserInput! @spread
     ):String @field(resolver: "AuthMutator@FogotPassword")

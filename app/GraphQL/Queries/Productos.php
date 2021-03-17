@@ -34,7 +34,9 @@ class Productos
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
             })
+            //->where('cmd_categorias.U_CMD_Activo',1)
             ->where('cmd_ocla.U_CMD_ClaIte',$args['type'])
+            ->orderBy('cmd_ocla.U_CMD_Orden', 'desc')
             ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
             ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);   
         foreach($productos as $producto){
@@ -62,6 +64,7 @@ class Productos
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
             })
+            ->where('cmd_categorias.U_CMD_Activo',1)
             ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
             ->where('cmd_carrito_consolidado.ID_PRODUCTO',$args['id_producto'])
             ->first();
@@ -94,6 +97,7 @@ class Productos
                         ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                         ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
                 })
+                ->where('cmd_categorias.U_CMD_Activo',1)
                 ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
                 ->where('cmd_carrito_consolidado.ID_CATEGORIA',$slug->U_CMD_IdCate)
                 ->where('cmd_carrito_consolidado.ID_SUBCATEGORIA_01',$slug1->U_CMD_IdSuCa01)
@@ -127,6 +131,7 @@ class Productos
                         ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
                 })
                 ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                ->where('cmd_categorias.U_CMD_Activo',1)
                 ->where('cmd_carrito_consolidado.ID_CATEGORIA',$slug->U_CMD_IdCate)
                 ->where('cmd_carrito_consolidado.ID_SUBCATEGORIA_01',$slug1->U_CMD_IdSuCa01)
                 ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
@@ -157,6 +162,7 @@ class Productos
                         ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
                 })
                 ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                ->where('cmd_categorias.U_CMD_Activo',1)
                 ->where('cmd_carrito_consolidado.ID_CATEGORIA',$slug->U_CMD_IdCate)
                 ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
                 foreach($productos_relacionados as $relacionados){
@@ -190,6 +196,7 @@ class Productos
             })
 
             ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+            ->where('cmd_categorias.U_CMD_Activo',1)
             ->where('cmd_carrito_consolidado.slug', 'LIKE',"%".$args["slug"]."%")
             ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
         foreach($productos as $products){
@@ -225,6 +232,7 @@ class Productos
             })
 
             ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+            ->where('cmd_categorias.U_CMD_Activo',1)
             ->where('cmd_carrito_consolidado.ID_PRODUCTO','!=',@$product->ID_PRODUCTO)
             ->where('cmd_carrito_consolidado.ID_CATEGORIA',@$product->ID_CATEGORIA)
             ->where('cmd_carrito_consolidado.ID_SUBCATEGORIA_01',@$product->ID_SUBCATEGORIA_01)
@@ -318,6 +326,7 @@ class Productos
             })
 
             ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+            ->where('cmd_categorias.U_CMD_Activo',1)
             ->where($array_comnsulta)
             ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
             foreach($productos as $products){
@@ -420,7 +429,7 @@ class Productos
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
             })
-            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
             ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[0]."%")
             ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[0]."%")
             ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[0]."%")
@@ -432,7 +441,7 @@ class Productos
             ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_02', 'LIKE',"%".$palabras[0]."%")
             ->get();
         if(\count($palabras)>1){
-            $array0=$productos->pluck('ID_PRODUCTO')->toArray();
+            $array0=$productos->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray();
             for ($i=1; $i <\count($palabras) ; $i++) { 
                 $productos_aux=DB::table('cmd_carrito_consolidado')
                     ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
@@ -448,7 +457,7 @@ class Productos
                             ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                             ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
                     })
-                    ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                    ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
                     ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[$i]."%")
                     ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[$i]."%")
                     ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[$i]."%")
@@ -460,7 +469,7 @@ class Productos
                     ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_02', 'LIKE',"%".$palabras[$i]."%")
                     ->get();
                     if(count($productos_aux)>0){
-                        $array0=array_intersect($array0, $productos_aux->pluck('ID_PRODUCTO')->toArray());        
+                        $array0=array_intersect($array0, $productos_aux->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray());        
                     }          
             }
             $productos=$productos->whereIn('ID_PRODUCTO',array_unique($array0));
@@ -580,7 +589,7 @@ class Productos
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                     ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
             })
-            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
             ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[0]."%")
             ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[0]."%")
             ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[0]."%")
@@ -593,7 +602,7 @@ class Productos
             ->get();
         
         if(\count($palabras)>1){
-            $array0=$productos->pluck('ID_PRODUCTO')->toArray();
+            $array0=$productos->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray();
             for ($i=1; $i <\count($palabras) ; $i++) { 
                 $productos_aux=DB::table('cmd_carrito_consolidado')
                     ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
@@ -609,7 +618,7 @@ class Productos
                             ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
                             ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
                     })
-                    ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                    ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
                     ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[$i]."%")
                     ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[$i]."%")
                     ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[$i]."%")
@@ -621,7 +630,7 @@ class Productos
                     ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_02', 'LIKE',"%".$palabras[$i]."%")
                     ->get();
                     if(count($productos_aux)>0){
-                        $array0=array_intersect($array0, $productos_aux->pluck('ID_PRODUCTO')->toArray());       
+                        $array0=array_intersect($array0, $productos_aux->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray());       
                     }     
             }
             $productos=$productos->whereIn('ID_PRODUCTO',array_unique($array0));

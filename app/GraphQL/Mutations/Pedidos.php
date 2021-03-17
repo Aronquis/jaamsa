@@ -118,6 +118,8 @@ class Pedidos
                 'DocTotal'=>$pedidos->DocTotal,
                 'CMD_TipEnt'=>$pedidos->CMD_TipEnt,
                 'CMD_MetPag'=>$pedidos->CMD_MetPag,
+                'CMD_Movil'=>$pedidos->CMD_Movil,
+                'CMD_Comments'=>$pedidos->CMD_Comments,
                 'BankCode'=>$pedidos->BankCode,
                 'TransDate'=>$pedidos->TransDate,
                 'RefNum'=>$pedidos->RefNum,
@@ -142,6 +144,8 @@ class Pedidos
                 'DocTotal'=>$pedidos->DocTotal,
                 'CMD_TipEnt'=>$pedidos->CMD_TipEnt,
                 'CMD_MetPag'=>$pedidos->CMD_MetPag,
+                'CMD_Movil'=>$pedidos->CMD_Movil,
+                'CMD_Comments'=>$pedidos->CMD_Comments,
                 'BankCode'=>$pedidos->BankCode,
                 'TransDate'=>$pedidos->TransDate,
                 'CMD_FecExpPE'=>$pedidos->CMD_FecExpPE,
@@ -293,6 +297,7 @@ class Pedidos
             DB::table('cmd_ordr')
                 ->insert([
                     'DocEntry'=>@$ultimoRegistro+1,'CardCode'=>@$CardCode,'DocCur'=>@$args['DocCur'],'DocDate'=>@$args['DocDate'],
+                    'CMD_Movil'=>@$args["CMD_Movil"],'CMD_Comments'=>@$args["CMD_Comments"],
                     'DocTotal'=>@$Total,'CMD_MetPag'=>@$args['CMD_MetPag'],'CMD_TipEnt'=>@$args['CMD_TipEnt'],'BankCode'=>@$args['BankCode'],'TransDate'=>@$args['TransDate'],
                     'RefNum'=>@$args['RefNum'],'OINV_Address'=>$OINV_Address,'ODLN_Address'=>$ODLN_Address,'Id_EstPed'=>@$args['Id_EstPed'],
                     'CMD_FecExpPE'=>date('Y-m-d H:i:s',strtotime(@$args['CMD_FecExpPE'])),'Total_Flete'=>@$args['Precio']

@@ -23,6 +23,7 @@ class CategoriasGet
         // TODO implement the resolver
         $categoriacmd=DB::table('cmd_categorias')
             ->select('cmd_categorias.U_CMD_IdCate','cmd_categorias.U_CMD_DesCat','cmd_categorias.Slug as SlugCat')
+            ->where('cmd_categorias.U_CMD_Activo',1)
             ->get();
         foreach($categoriacmd as $CateCmd){
             $cate01=DB::table('cmd_subcategoria01')
@@ -105,7 +106,6 @@ class CategoriasGet
                         ->get();
             }
 
-            return $categorias;
             return $categorias;
         }
         
