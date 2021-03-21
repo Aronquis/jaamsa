@@ -23,7 +23,7 @@ type Query {
     GetFiltrosPalabraClave(palabraClave:String):Filtros@field(resolver: "Productos@FiltrosDePalabraClave")
     GetProductoSlug(slug:String,number_paginate:Int,page:Int):GetProductosSlug @field(resolver: "Productos@getProductoSlug")
     GetProductosIdRelacionado(slug:String,number_paginate:Int,page:Int):GetProductosSlug@field(resolver: "Productos@getProductosSlugRelacionados")
-    GetBusquedaAvansada(precio:[Float!],marca:String,categoria:[CategoriaBusqueda!],cicloMensual:String,
+    GetBusquedaAvanzada(precio:[Float!],marca:String,categoria:[CategoriaBusqueda!],cicloMensual:String,
                         granaje:String,formato:String,velocidadBN:String,
                         velocidadColor:String,number_paginate:Int,page:Int):ProductosBusquedaAvansa @field(resolver: "Productos@BusquedaAvansada")
 
@@ -67,6 +67,17 @@ type Query {
 
     #parametros
     GetAllParametros:[parametros!] @field(resolver: "Parametros@GetAllParametros")
+    #parametros
+    GetAllFleteLima(Id_Distrito:String):FleteLima @field(resolver: "Fletes@FleteLima")
+}
+type FleteLima{
+    Id_Departamento:String
+    Departamento:String
+    Id_Provincia:String
+    Provincia:String
+    Id_Distrito:String
+    Distrito:String
+    Monto:Float
 }
 type Banks{
     BankCode:String

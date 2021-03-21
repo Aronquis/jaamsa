@@ -482,6 +482,7 @@ class Productos
                         $products->STATESTOCK="AGOTADO";
                 }
             }
+            
             $nroItems=\count($productos);
             $productos = $productos->forPage($args['page'], $args['number_paginate']); //Filter the page var
 

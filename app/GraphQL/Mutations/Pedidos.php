@@ -306,7 +306,7 @@ class Pedidos
                 
                 DB::table('cmd_rdr1')
                 ->insert(['DocEntry'=>@$ultimoRegistro+1,'ItemCode'=>@$detallePedido['ItemCode'],
-                'Quantity'=>(Int)@$detallePedido['Quantity'],'Price'=>(Float)@$totalPrecio['Price']
+                'Quantity'=>(Int)@$detallePedido['Quantity'],'Price'=>(Float)@$detallePedido['Price']
                 ]);
 
                 $producto_recu=DB::table('cmd_itm1')->where('ItemCode',@$detallePedido['ItemCode'])->first();

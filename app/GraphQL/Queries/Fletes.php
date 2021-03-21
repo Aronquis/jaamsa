@@ -16,8 +16,16 @@ class Fletes
      * @param  \GraphQL\Type\Definition\ResolveInfo  $resolveInfo Information about the query itself, such as the execution state, the field name, path to the field from the root, and more.
      * @return mixed
      */
+    public function FleteLima($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
+        $flete=DB::table('CMD_Flete_Lima')
+            ->where('Id_Distrito',$args['Id_Distrito'])
+            ->first();
+        return $flete;
+    }
     public function Sedes($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
+        
         $sedes=DB::table('cmd_sedes')
             ->get();
         return $sedes;
