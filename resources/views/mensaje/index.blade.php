@@ -20,32 +20,15 @@ p {
 <body>
 <p></p>
 <div>
-@if(@$args['typeContact']==1)
-<h4><?php print_r('Tipo de Contacto : Persona Natural');?></h4>
+<h3>Datos del formulario Web</h3>
+<h4><?php print_r('Nombres: '.@$args['nombre']);?> </h4>
 </br>
-<h4><?php print_r('DNI: '.@$args['dni']);?></h4>
+<h4><?php print_r('Celular: '.@$args['celular']);?></h4>
 </br>
-@endif
-@if(@$args['typeContact']==2)
-<h4><?php print_r('Tipo de Contacto : Representante de una empresa');?></h4>
+<h4><?php print_r('email: '.@$args['email']);?> </h4>
 </br>
-<h4><?php print_r('RUC: '.@$args['ruc']);?></h4>
-</br>
-@endif
-}
-<h4><?php print_r('Nombres: '.@$args['name']);?> </h4>
-</br>
-<h4><?php print_r('Email: '.@$args['phone']);?></h4>
-</br>
-<h4><?php print_r('Nombres: '.@$args['schedule']);?> </h4>
-</br>
-<h4><?php print_r('Asunto: '.@$args['subject']);?></h4>
-</br>
-<div >
-<h4>Mensaje:</h4>
-</br>
-<h4><?php print_r(@$args['bodyMessage']);?> </h4>
-</div>
+<h4><?php print_r('mensaje: '.@$args['mensaje']);?></h4>
+
 
 
 </div>

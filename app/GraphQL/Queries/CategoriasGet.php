@@ -195,7 +195,7 @@ class CategoriasGet
                 ->get();
             foreach($velocidad as $velo){
                 if((String)$velo->Velocidad_BN_Pag_Min!=""){
-                    array_push($velocidades,str_replace(" ", "",(String)$velo->Velocidad_BN_Pag_Min));
+                    array_push($velocidades,(String)$velo->Velocidad_BN_Pag_Min);
                 }
             }
             sort($velocidades);
@@ -212,7 +212,7 @@ class CategoriasGet
                 ->get();
             foreach($velocidad as $velo){
                 if((String)$velo->Velocidad_BN_Pag_Min!=""){
-                    array_push($velocidades,str_replace(" ", "",(String)$velo->Velocidad_BN_Pag_Min));
+                    array_push($velocidades,(String)$velo->Velocidad_BN_Pag_Min);
                 }
             }
             sort($velocidades);
@@ -227,7 +227,7 @@ class CategoriasGet
                 ->get();
             foreach($velocidad as $velo){
                 if((String)$velo->Velocidad_BN_Pag_Min!=""){
-                    array_push($velocidades,str_replace(" ", "",(String)$velo->Velocidad_BN_Pag_Min));
+                    array_push($velocidades,(String)$velo->Velocidad_BN_Pag_Min);
                 }
             }
             sort($velocidades);
@@ -240,7 +240,7 @@ class CategoriasGet
                 ->get();
             foreach($velocidad as $velo){
                 if((String)$velo->Velocidad_BN_Pag_Min!=""){
-                    array_push($velocidades,str_replace(" ", "",(String)$velo->Velocidad_BN_Pag_Min));
+                    array_push($velocidades,(String)$velo->Velocidad_BN_Pag_Min);
                 }
             }
             sort($velocidades);

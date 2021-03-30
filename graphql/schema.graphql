@@ -24,7 +24,7 @@ type Query {
     GetProductoSlug(slug:String,number_paginate:Int,page:Int):GetProductosSlug @field(resolver: "Productos@getProductoSlug")
     GetProductosIdRelacionado(slug:String,number_paginate:Int,page:Int):GetProductosSlug@field(resolver: "Productos@getProductosSlugRelacionados")
     GetBusquedaAvanzada(precio:[Float!],marca:String,categoria:[CategoriaBusqueda!],cicloMensual:String,
-                        granaje:String,formato:String,velocidadBN:String,
+                        granaje:String,formato:String,velocidadBN:String,palabraClave:String,
                         velocidadColor:String,number_paginate:Int,page:Int):ProductosBusquedaAvansa @field(resolver: "Productos@BusquedaAvansada")
 
     GetDepartamentos:[Departamentos!]@field(resolver: "Localizacion@GetDepartamentos")
@@ -319,7 +319,7 @@ type CategoriaPadreHijoNieto{
 input CategoriaBusqueda{
     categoria:String
     categoria01:String
-    categoria02:[String!]
+    categoria02:String
 }
 type GetProductos{
     NroItems:Float
@@ -428,15 +428,11 @@ type Categoria02{
     SlugCa02:String
 }
 type Contacto {
-    typeContact: Float!
-    name: String!
-    dni: Float
-    ruc: Float
-    email: String!
-    phone:Float!
-    schedule:String!
-    subject:String!
-    bodyMessage:String! 
+    nombre: String
+    celular: String
+    email: String
+    mensaje: String
+    
 }
 type User {
     CardCode: String
@@ -540,14 +536,10 @@ type Mutation {
         input:UserInput! @spread
     ):User @field(resolver: "AuthMutator@CrearUsuarios")
 
-    Contacto(typeContact:Float!,
-    name: String!,
-    ruc: Float,
-    dni: Float,
-    email: String!,
-    phone:Float!,
-    schedule:String!,
-    subject:String!,
-    bodyMessage:String!,
-    ): Contacto!
+    Contacto(
+        nombre: String
+        celular: String
+        email: String
+        mensaje: String
+    ): String!
 }

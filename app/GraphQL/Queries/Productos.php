@@ -258,87 +258,355 @@ class Productos
             array_push($array_comnsulta,$consulta);
         }
         if(isset($args["marca"])==true){
-            $consulta=['cmd_carrito_consolidado.MARCA', 'LIKE',"%".$args["marca"]."%"];
+            $consulta=['cmd_carrito_consolidado.MARCA',$args["marca"]];
             array_push($array_comnsulta,$consulta);
         }
         if(\count($args['categoria'])>0){
             foreach($args['categoria'] as $categorias){
-                $consulta0=['cmd_carrito_consolidado.ID_CATEGORIA', 'LIKE',"%".(int)$categorias['categoria']."%"];
-                array_push($array_comnsulta,$consulta0);
-                $consulta1=['cmd_carrito_consolidado.ID_SUBCATEGORIA_01', 'LIKE',"%".(int)$categorias['categoria01']."%"];
-                array_push($array_comnsulta,$consulta1);
-                foreach($categorias['categoria02'] as $subcate){
-                    $consulta2=['cmd_carrito_consolidado.ID_SUBCATEGORIA_02', 'LIKE',"%".(int)$subcate."%"];
-                    array_push($array_comnsulta,$consulta2);
+                if($categorias['categoria']!=""){
+                    $consulta0=['cmd_carrito_consolidado.ID_CATEGORIA', $categorias['categoria']];
+                    array_push($array_comnsulta,$consulta0);
+                }
+                if($categorias['categoria01']!=""){
+                    $consulta0=['cmd_carrito_consolidado.ID_SUBCATEGORIA_01', $categorias['categoria01']];
+                    array_push($array_comnsulta,$consulta0);
+                }
+                if($categorias['categoria02']!=""){
+                    $consulta0=['cmd_carrito_consolidado.ID_SUBCATEGORIA_02', $categorias['categoria02']];
+                    array_push($array_comnsulta,$consulta0);
                 }
             }
         }
         if(isset($args["cicloMensual"])==true){
-            $consulta=['cmd_carrito_consolidado.Ciclo_Mensual', 'LIKE',"%".$args["cicloMensual"]."%"];
+            $consulta=['cmd_carrito_consolidado.Ciclo_Mensual',$args["cicloMensual"]];
             array_push($array_comnsulta,$consulta);
         }
         if(isset($args["granaje"])==true){
-            $consulta=['cmd_carrito_consolidado.Gramaje', 'LIKE',"%".$args["granaje"]."%"];
+            $consulta=['cmd_carrito_consolidado.Gramaje',$args["granaje"]];
             array_push($array_comnsulta,$consulta);
         }
         if(isset($args["formato"])==true){
             if($args["formato"]=="A0"){
-                $consulta=['cmd_carrito_consolidado.Formato_A0', 'LIKE',"%".$args["formato"]."%"];
+                $consulta=['cmd_carrito_consolidado.Formato_A0',$args["formato"]];
                 array_push($array_comnsulta,$consulta);
             }
             if($args["formato"]=="A1"){
-                $consulta=['cmd_carrito_consolidado.Formato_A1', 'LIKE',"%".$args["formato"]."%"];
+                $consulta=['cmd_carrito_consolidado.Formato_A1',$args["formato"]];
                 array_push($array_comnsulta,$consulta);
             }
             if($args["formato"]=="A3"){
-                $consulta=['cmd_carrito_consolidado.Formato_A3', 'LIKE',"%".$args["formato"]."%"];
+                $consulta=['cmd_carrito_consolidado.Formato_A3', $args["formato"]];
                 array_push($array_comnsulta,$consulta);
             }
             if($args["formato"]=="A4"){
-                $consulta=['cmd_carrito_consolidado.Formato_A4', 'LIKE',"%".$args["formato"]."%"];
+                $consulta=['cmd_carrito_consolidado.Formato_A4',$args["formato"]];
                 array_push($array_comnsulta,$consulta);
             }
         }
         if(isset($args["velocidadBN"])==true){
-            $consulta=['cmd_carrito_consolidado.Velocidad_BN_Pag_Min', 'LIKE',"%".$args["velocidadBN"]."%"];
+            $consulta=['cmd_carrito_consolidado.Velocidad_BN_Pag_Min',$args["velocidadBN"]];
             array_push($array_comnsulta,$consulta);
         }
         if(isset($args["velocidadColor"])==true){
-            $consulta=['cmd_carrito_consolidado.Velocidad_Color_Pag_Min', 'LIKE',"%".$args["velocidadColor"]."%"];
+            $consulta=['cmd_carrito_consolidado.Velocidad_Color_Pag_Min', $args["velocidadColor"]];
             array_push($array_comnsulta,$consulta);
         }
         ///////////////////////////////
         if(\count($array_comnsulta)>0){
-            
-            $productos=DB::table('cmd_carrito_consolidado')
-            ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
-            
-            ->join('cmd_categorias','cmd_categorias.U_CMD_IdCate','=','cmd_carrito_consolidado.ID_CATEGORIA')
+            if($args["palabraClave"]!=""){
+                ////////////////////
+                $palabras_aux = explode (" ", strtoupper($args["palabraClave"]));
+                foreach($palabras_aux as $palabra){
+                    if($palabra=="EL"){
+                        $key = array_search('EL', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="LA"){
+                        $key = array_search('LA', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="LOS"){
+                        $key = array_search('LOS', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="A"){
+                        $key = array_search('A', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="PARA"){
+                        $key = array_search('PARA', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="DE"){
+                        $key = array_search('DE', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="DEL"){
+                        $key = array_search('DEL', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="AL"){
+                        $key = array_search('AL', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                  
+                    if($palabra=="ES"){
+                        $key = array_search('ES', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="SON"){
+                        $key = array_search('SON', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="ME"){
+                        $key = array_search('ME', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="MI"){
+                        $key = array_search('MI', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="TU"){
+                        $key = array_search('TU', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="QUE"){
+                        $key = array_search('QUE', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                    if($palabra=="POR"){
+                        $key = array_search('POR', $palabras_aux);
+                        unset($palabras_aux[$key]);
+                    }
+                }
+                $palabras=[];
+                foreach($palabras_aux as $palabra){
+                    array_push($palabras,$palabra);
+                }
+                $productos=DB::table('cmd_carrito_consolidado')
+                    ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
 
-            ->join('cmd_subcategoria01',function($join){
-                $join->on("cmd_subcategoria01.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
-                    ->on("cmd_subcategoria01.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01");
-            })
-            ->join('cmd_subcategoria02',function($join){
-                $join->on("cmd_subcategoria02.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
-                    ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
-                    ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
-            })
+                    ->join('cmd_categorias','cmd_categorias.U_CMD_IdCate','=','cmd_carrito_consolidado.ID_CATEGORIA')
 
-            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
-            ->where('cmd_categorias.U_CMD_Activo',1)
-            ->where($array_comnsulta)
-            ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
-            foreach($productos as $products){
-                if((Int)$products->OnHand>0){
+                    ->join('cmd_subcategoria01',function($join){
+                        $join->on("cmd_subcategoria01.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                            ->on("cmd_subcategoria01.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01");
+                    })
+                    ->join('cmd_subcategoria02',function($join){
+                        $join->on("cmd_subcategoria02.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                            ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
+                            ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
+                    })
+                    ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                    ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.HISTORICO_NUMERO_PARTE', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.DESCRIPCION_CATEGORIA', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.DESCRIPCION_SUBCATEGORIA_01', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.DESCRIPCION_SUBCATEGORIA_02', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_01', 'LIKE',"%".$palabras[0]."%")
+                    ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_02', 'LIKE',"%".$palabras[0]."%")
+                    ->get();
+                
+                if(\count($palabras)>1){
+                    $array0=$productos->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray();
+                    for ($i=1; $i <\count($palabras) ; $i++) { 
+                        $productos_aux=DB::table('cmd_carrito_consolidado')
+                            ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
+
+                            ->join('cmd_categorias','cmd_categorias.U_CMD_IdCate','=','cmd_carrito_consolidado.ID_CATEGORIA')
+
+                            ->join('cmd_subcategoria01',function($join){
+                                $join->on("cmd_subcategoria01.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                                    ->on("cmd_subcategoria01.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01");
+                            })
+                            ->join('cmd_subcategoria02',function($join){
+                                $join->on("cmd_subcategoria02.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                                    ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
+                                    ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
+                            })
+                            ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.U_CMD_Activo','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                            ->orwhere('cmd_carrito_consolidado.MARCA', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.DESCRIPCION', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.ULTIMO_NRO_PARTE', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.HISTORICO_NUMERO_PARTE', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.DESCRIPCION_CATEGORIA', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.DESCRIPCION_SUBCATEGORIA_01', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.DESCRIPCION_SUBCATEGORIA_02', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_01', 'LIKE',"%".$palabras[$i]."%")
+                            ->orwhere('cmd_carrito_consolidado.CMD_Carrito_Sinonimo_02', 'LIKE',"%".$palabras[$i]."%")
+                            ->get();
+                            if(count($productos_aux)>0){
+                                $array0=array_intersect($array0, $productos_aux->where('U_CMD_Activo',1)->pluck('ID_PRODUCTO')->toArray());        
+                            }          
+                    }
+                    $productos=$productos->whereIn('ID_PRODUCTO',array_unique($array0));
+
+                    foreach($productos as $products){
+                        if((Int)$products->OnHand>0){
+                                        
+                            $products->STATESTOCK="DISPONIBLE";
+                        }
+                        else{
+                                $products->STATESTOCK="AGOTADO";
+                        }
+                    }
+                    if(\count($args['precio'])>0){
+                        $productos=$productos->where('ItemPrice01','>=',(float)$args["precio"][0]);
+                        $productos=$productos->where('ItemPrice01','<=',(float)$args["precio"][1]);
+                    }
+                    if(isset($args["marca"])==true){
+                        $productos=$productos->where('MARCA',$args["marca"]);
+                    
+                    }
+                    if(\count($args['categoria'])>0){
+                        foreach($args['categoria'] as $categorias){
+                            if($categorias['categoria']!=""){
+                                $productos=$productos->where('ID_CATEGORIA',$categorias['categoria']);
+                            }
+                            if($categorias['categoria01']!=""){
+                                $productos=$productos->where('ID_SUBCATEGORIA_01',$categorias['categoria01']);
+                            }
+                            if($categorias['categoria02']!=""){
+                                $productos=$productos->where('ID_SUBCATEGORIA_02',$categorias['categoria02']);
+                            }
+                        }
+                    }
+                    if(isset($args["cicloMensual"])==true){
+                        $productos=$productos->where('Ciclo_Mensual',$args["cicloMensual"]);
+                    }
+                    if(isset($args["granaje"])==true){
+                        $productos=$productos->where('Gramaje',$args["granaje"]);
+                    }
+                    if(isset($args["formato"])==true){
+                        if($args["formato"]=="A0"){
+                            $productos=$productos->where('Formato_A0',$args["formato"]);
                             
-                    $products->STATESTOCK="DISPONIBLE";
+                        }
+                        if($args["formato"]=="A1"){
+                            $productos=$productos->where('Formato_A1',$args["formato"]);
+                            
+                        }
+                        if($args["formato"]=="A3"){
+                            $productos=$productos->where('Formato_A3',$args["formato"]);
+                        }
+                        if($args["formato"]=="A4"){
+                            $productos=$productos->where('Formato_A4',$args["formato"]);
+                        }
+                    }
+                    if(isset($args["velocidadBN"])==true){
+                        $productos=$productos->where('Velocidad_BN_Pag_Min',$args["velocidadBN"]);
+                    }
+                    if(isset($args["velocidadColor"])==true){
+                        $productos=$productos->where('Velocidad_Color_Pag_Min',$args["velocidadColor"]);
+                    }
+                    $nroItems=\count($productos);
+                    $productos = $productos->forPage($args['page'], $args['number_paginate']); //Filter the page var
+
+                    return ['NroItems'=>$nroItems,'data'=>$productos];
+                    
                 }
                 else{
-                    $products->STATESTOCK="AGOTADO";
+                    foreach($productos as $products){
+                        if((Int)$products->OnHand>0){
+                                        
+                            $products->STATESTOCK="DISPONIBLE";
+                        }
+                        else{
+                                $products->STATESTOCK="AGOTADO";
+                        }
+                    }
+                    if(\count($args['precio'])>0){
+                        $productos=$productos->where('ItemPrice01','>=',(float)$args["precio"][0]);
+                        $productos=$productos->where('ItemPrice01','<=',(float)$args["precio"][1]);
+                    }
+                    if(isset($args["marca"])==true){
+                        $productos=$productos->where('MARCA',$args["marca"]);
+                    
+                    }
+                    if(\count($args['categoria'])>0){
+                        foreach($args['categoria'] as $categorias){
+                            if($categorias['categoria']!=""){
+                                $productos=$productos->where('ID_CATEGORIA',$categorias['categoria']);
+                            }
+                            if($categorias['categoria01']!=""){
+                                $productos=$productos->where('ID_SUBCATEGORIA_01',$categorias['categoria01']);
+                            }
+                            if($categorias['categoria02']!=""){
+                                $productos=$productos->where('ID_SUBCATEGORIA_02',$categorias['categoria02']);
+                            }
+                        }
+                    }
+                    if(isset($args["cicloMensual"])==true){
+                        $productos=$productos->where('Ciclo_Mensual',$args["cicloMensual"]);
+                    }
+                    if(isset($args["granaje"])==true){
+                        $productos=$productos->where('Gramaje',$args["granaje"]);
+                    }
+                    if(isset($args["formato"])==true){
+                        if($args["formato"]=="A0"){
+                            $productos=$productos->where('Formato_A0',$args["formato"]);
+                            
+                        }
+                        if($args["formato"]=="A1"){
+                            $productos=$productos->where('Formato_A1',$args["formato"]);
+                            
+                        }
+                        if($args["formato"]=="A3"){
+                            $productos=$productos->where('Formato_A3',$args["formato"]);
+                        }
+                        if($args["formato"]=="A4"){
+                            $productos=$productos->where('Formato_A4',$args["formato"]);
+                        }
+                    }
+                    if(isset($args["velocidadBN"])==true){
+                        $productos=$productos->where('Velocidad_BN_Pag_Min',$args["velocidadBN"]);
+                    }
+                    if(isset($args["velocidadColor"])==true){
+                        $productos=$productos->where('Velocidad_Color_Pag_Min',$args["velocidadColor"]);
+                    }
+                    $nroItems=\count($productos);
+                    $productos = $productos->forPage($args['page'], $args['number_paginate']); //Filter the page var
+
+                    return ['NroItems'=>$nroItems,'data'=>$productos];
                 }
+            
+
             }
-            return ['NroItems'=>$productos->total(),'data'=>$productos];
+            else{
+              
+                $productos=DB::table('cmd_carrito_consolidado')
+                ->join('cmd_itm1','cmd_itm1.ItemCode','=','cmd_carrito_consolidado.ID_PRODUCTO')
+                
+                ->join('cmd_categorias','cmd_categorias.U_CMD_IdCate','=','cmd_carrito_consolidado.ID_CATEGORIA')
+
+                ->join('cmd_subcategoria01',function($join){
+                    $join->on("cmd_subcategoria01.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                        ->on("cmd_subcategoria01.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01");
+                })
+                ->join('cmd_subcategoria02',function($join){
+                    $join->on("cmd_subcategoria02.U_CMD_IdCate","=","cmd_carrito_consolidado.ID_CATEGORIA")
+                        ->on("cmd_subcategoria02.U_CMD_IdSuCa01","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_01")
+                        ->on("cmd_subcategoria02.U_CMD_IdSuCa02","=","cmd_carrito_consolidado.ID_SUBCATEGORIA_02");
+                })
+
+                ->select('cmd_carrito_consolidado.*','cmd_itm1.*','cmd_categorias.Slug as SlugCategoria','cmd_subcategoria01.Slug as SlugCategoria01','cmd_subcategoria02.Slug as SlugCategoria02')
+                ->where('cmd_categorias.U_CMD_Activo',1)
+                ->where($array_comnsulta)
+                ->paginate($perPage = $args['number_paginate'], $columns = ['*'], $pageName = 'page', $page = $args['page']);
+                foreach($productos as $products){
+                    if((Int)$products->OnHand>0){
+                                
+                        $products->STATESTOCK="DISPONIBLE";
+                    }
+                    else{
+                        $products->STATESTOCK="AGOTADO";
+                    }
+                }
+                return ['NroItems'=>$productos->total(),'data'=>$productos];
+            }
+            
         }
         else{
             return ['NroItems'=>null,'data'=>null];
@@ -747,7 +1015,7 @@ class Productos
             $filtros->cicloMensual=array_unique($cicloMensual);
             $filtros->marcas=array_unique($marcas);
 
-            $filtros->precios=[min($precios),max($precios)];
+            $filtros->precios=[@min($precios),@max($precios)];
             $filtros->formatos=array_unique($formatos);
             return $filtros;
         }

@@ -19,20 +19,11 @@ class Contacto
     public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
         Mail::send('mensaje.index',['args' => $args], function ($m) use ($args) {
-            $m->to('contactanos@abrgrupoconsultor.pe');
-            $m->subject(@$args['subject']);
-            $m->from('contactanos@abrgrupoconsultor.pe',@$args['email']);
+            $m->to([env('CORREO_ADMIN'),env('CORREO_FORMULARIO')]);
+            $m->subject("Datos de formulario Jaamsa Online");
+            $m->from('postventa@jaamsaonline.com.pe',@$args['email']);
         });
-           
-        return ['typeContact'=>$args['typeContact'],
-        'name'=>$args['name'],
-        'dni'=>$args['dni'],
-        'ruc'=>$args['ruc'],
-        'email'=>$args['email'],
-        'phone'=>$args['phone'],
-        'schedule'=>$args['schedule'],
-        'subject'=>$args['subject'],
-        'bodyMessage'=>$args['bodyMessage']];
+        return "ENVIADO";
     }
     
 }

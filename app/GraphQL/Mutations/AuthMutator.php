@@ -173,8 +173,9 @@ class AuthMutator
     }
     public function Login($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $usuario=cmd_ocrd::where('E_Mail',strtoupper($args['E_Mail']))->first();
-        if ($usuario->E_Mail == strtoupper($args['E_Mail']) && $usuario->Password == $args['Password']) {
+        $usuario=DB::table('cmd_ocrds')->where('E_Mail',strtoupper($args['E_Mail']))->first();
+       
+        if (@$usuario->E_Mail == strtoupper($args['E_Mail']) && $usuario->Password == $args['Password']) {
             $payload = array(
                 "iss" => strtoupper($args['E_Mail']),
                 "aud" => $args['Password'],
