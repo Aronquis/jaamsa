@@ -12,13 +12,13 @@ type Query {
     user(id: ID @eq): User @find
     GetCategorias:[Categoriacmd!]@field(resolver: "CategoriasGet@categorias_hijo_nieto")
 
-    GetProductos(number_paginate:Int,page:Int,type:Int):GetProductos!@field(resolver: "Productos@getProductos") 
+    GetProductos(number_paginate:Int,page:Int,type:Int):GetProductos!@field(resolver: "Productos@getProductos")
     GetProductoID(id_producto:String):Producto!@field(resolver: "Productos@getProductoID")
 
     GetProductosRelacionadosCategoria(slug:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
     GetProductosRelacionadosCategoria01(slug:String,slug1:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
     GetProductosRelacionadosCategoria02(slug:String,slug1:String,slug2:String,number_paginate:Int,page:Int):CategoriaPadreHijoNieto@field(resolver: "Productos@getProductoRelacionados")
-    
+
     GetProductoPalabraClave(palabraClave:String,number_paginate:Int,page:Int):GetProductos@field(resolver: "Productos@BusquedaProductosSeisCampos")
     GetFiltrosPalabraClave(palabraClave:String):Filtros@field(resolver: "Productos@FiltrosDePalabraClave")
     GetProductoSlug(slug:String,number_paginate:Int,page:Int):GetProductosSlug @field(resolver: "Productos@getProductoSlug")
@@ -43,6 +43,7 @@ type Query {
     GetClientePedidos(number_paginate:Int,page:Int):PedidoCliente @field(resolver: "ClientePedidos@ClientePedidos")
     GetClienteDetalleDocEntry(DocEntry:Float):Pedidos @field(resolver: "ClientePedidos@ClientesDetalleDocEntry")
 
+
     GetClienteIDPedido:[Pedidos!] @field(resolver: "ClientePedidos@ClienteIdPedido")
     @middleware(checks: ["auth:api"])
 
@@ -66,10 +67,74 @@ type Query {
     GetIdBanner(Id:Int):banners @field(resolver: "Banners@GetIdBanners")
 
     #parametros
-    GetAllParametros:[parametros!] @field(resolver: "Parametros@GetAllParametros")
-    #parametros
     GetAllFleteLima(Id_Distrito:String):FleteLima @field(resolver: "Fletes@FleteLima")
+    #marcas
+    GetAllMarcas:[Marcas!] @field(resolver: "Marcas@GetAllMarcas")
+    GetCodeMarcas(code:String):Marcas@field(resolver: "Marcas@GetCodeMarcas")
+    #descuento Productos
+    GetAllDescuentoProductos:[DescuentoProducto!] @field(resolver: "DescuentoProductos@GetAllDescuentoProductos")
+    GetIDDescuentoProductos(id:Int):DescuentoProducto@field(resolver: "DescuentoProductos@GetIDDescuentoProductos")
+    #descuento Flete
+    GetAllDescuentoFlete:[DescuentoFlete!] @field(resolver: "DescuentoFlete@GetAllDescuentofletes")
+    GetIDDescuentoFlete(id:Int):DescuentoFlete@field(resolver: "DescuentoFlete@GetIDDescuentofletes")
+
 }
+type DescuentoFlete{
+    id:ID
+    TipoOferta:Int
+    Categoria:String
+    Subcategoria01:String
+    Subcategoria02:String
+    MarcaCode:String
+    FechaInicial:String
+    FechaFinal:String
+    Valor:Float
+    Estado:Int
+    Marcas:Marcas
+}
+input DescuentoFleteInput{
+    id:ID
+    TipoOferta:Int
+    Categoria:String
+    Subcategoria01:String
+    Subcategoria02:String
+    MarcaCode:String
+    FechaInicial:String
+    FechaFinal:String
+    Valor:Float
+    Estado:Int
+}
+
+type DescuentoProducto{
+    id:ID
+    TipoOferta:Int
+    Categoria:String
+    Subcategoria01:String
+    Subcategoria02:String
+    MarcaCode:String
+    FechaInicial:String
+    FechaFinal:String
+    Valor:Float
+    Estado:Int
+    Marcas:Marcas
+}
+input DescuentoProductoInput{
+    id:ID
+    TipoOferta:Int
+    Categoria:String
+    Subcategoria01:String
+    Subcategoria02:String
+    MarcaCode:String
+    FechaInicial:String
+    FechaFinal:String
+    Valor:Float
+    Estado:Int
+}
+type Marcas{
+    code:String
+    name:String
+}
+
 type FleteLima{
     Id_Departamento:String
     Departamento:String
@@ -95,6 +160,7 @@ type Filtros{
     precios:[String!]
     formatos:[String!]
 }
+
 type Sedes{
     Id:ID
     DesSed:String
@@ -116,6 +182,7 @@ type Tarifa{
     Descripcion:String
     Valor:String
 }
+
 type Precios{
     Minimo:Float
     Maximo:Float
@@ -128,6 +195,7 @@ type Bancos{
     BankCode:String
     BankName:String
 }
+
 input PedidosInput{
     DocEntry:String
     CardCode:String
@@ -141,7 +209,9 @@ input PedidosInput{
     BankCode:String
     TransDate:Date
     RefNum:String
-    
+    descFleteLima:Float
+    valorDescFleteLima:Float
+
     Id_EstPed:Int
     CMD_FecExpPE:DateTimeTz
     OINV_Address:String
@@ -156,6 +226,7 @@ type Pagos{
     dateExpiry:String
     cipUrl:String
 }
+
 type Pedidos{
     DocEntry:String
     CardCode:String
@@ -175,22 +246,32 @@ type Pedidos{
     CMD_TipEnt:String
     CMD_FecExpPE:DateTime
     url_pagoefectivo:String
+    descFleteLima:Float
+    valorDescFleteLima:Float
     data:[DetallePedido!]
     data1:Clientes
     Pagos:Pagos
 }
+
 input DetallePedidoInput{
     DocEntry:String
     ItemCode:String
     Quantity:Float
     Price:Float
+    descuentoAsignado:Float
+    precioConDescuentoAsignado:Float
+    idDescuentoAsignado:Int
 }
+
 type DetallePedido{
     DocEntry:String
     ItemCode:String
     Quantity:Float
     Price:Float
-    
+    descuentoAsignado:Float
+    precioConDescuentoAsignado:Float
+    idDescuentoAsignado:Int
+
     DESCRIPCION:String
     ESCALA:String
     ItemPrice01:Float
@@ -211,6 +292,7 @@ type DetallePedido{
     IMAGEN_04:String
     IMAGEN_05:String
     COLOR_ITEM:String
+    CMD_CodMar:String
     MARCA:String
     RUTA_FICHA_TECNICA:String
     RUTA_YOUTUBE:String
@@ -248,7 +330,7 @@ type DetallePedido{
 }
 type PedidoCliente{
    NroItems:Int
-   data:[Pedidos] 
+   data:[Pedidos]
 }
 type ClientePedido{
     NroItems:Int
@@ -270,6 +352,7 @@ type Clientes{
     data:[TipoEntrega!]
     data1:[Pedidos!]
 }
+
 type TipoEntrega{
     CardCode:String
     Address:String
@@ -293,6 +376,7 @@ input TipoEntregaInput{
     Id_Distrito:String
     AdresType:String
 }
+
 input TipoEntregaEnvioInput{
     CardCodeEnvio:String
     AddressEnvio:String
@@ -316,6 +400,7 @@ type CategoriaPadreHijoNieto{
     NroItems:Int
     data:[Producto!]
 }
+
 input CategoriaBusqueda{
     categoria:String
     categoria01:String
@@ -328,7 +413,7 @@ type GetProductos{
 type GetProductosSlug{
     NroItems:Int
     data:[Producto!]
-    
+
 }
 type Departamentos{
     Code:String
@@ -339,6 +424,7 @@ type Provincias{
     Code:String
     Name:String
 }
+
 type Distritos{
     DepCode:String
     ProCode:String
@@ -367,6 +453,7 @@ type Producto{
     IMAGEN_04:String
     IMAGEN_05:String
     COLOR_ITEM:String
+    CMD_CodMar:String
     MARCA:String
     RUTA_FICHA_TECNICA:String
     RUTA_YOUTUBE:String
@@ -427,12 +514,13 @@ type Categoria02{
     U_CMD_DeSuCa02:String
     SlugCa02:String
 }
+
 type Contacto {
     nombre: String
     celular: String
     email: String
     mensaje: String
-    
+
 }
 type User {
     CardCode: String
@@ -451,6 +539,7 @@ type User {
     apitoken:String
     typeUser:Int
 }
+
 input UserInput{
     LicTradNum: String
     U_BPP_BPTP:String
@@ -471,6 +560,7 @@ type banners{
     Link:String
     TipoLink:Int
 }
+
 input bannersInput{
     Id:ID
     Nombre:String
@@ -487,7 +577,28 @@ input parametrosInput{
     id:Int
     Valor:String
 }
+
 type Mutation {
+    CreateDescuentoFlete(
+        input:DescuentoFleteInput! @spread
+    ):DescuentoFlete @field(resolver: "CrudDescuentoFlete@Create")
+    UpdateDescuentoFlete(
+        input:DescuentoFleteInput! @spread
+    ):DescuentoFlete @field(resolver: "CrudDescuentoFlete@Update")
+    DeleteDescuentoFlete(
+        input:DescuentoFleteInput! @spread
+    ):String @field(resolver: "CrudDescuentoFlete@Delete")
+
+    CreateDescuentoProducto(
+        input:DescuentoProductoInput! @spread
+    ):DescuentoProducto @field(resolver: "CrudDescuentosProductos@Create")
+    UpdateDescuentoProducto(
+        input:DescuentoProductoInput! @spread
+    ):DescuentoProducto @field(resolver: "CrudDescuentosProductos@Update")
+    DeleteDescuentoProducto(
+        input:DescuentoProductoInput! @spread
+    ):String @field(resolver: "CrudDescuentosProductos@Delete")
+
     UpdateParametros(
         input:parametrosInput! @spread
     ):parametros @field(resolver: "CrudParametros@Update")

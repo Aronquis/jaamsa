@@ -297,20 +297,22 @@ class Pedidos
             DB::table('cmd_ordr')
                 ->insert([
                     'DocEntry'=>@$ultimoRegistro+1,'CardCode'=>@$CardCode,'DocCur'=>@$args['DocCur'],'DocDate'=>@$args['DocDate'],
-                    'CMD_Movil'=>@$args["CMD_Movil"],'CMD_Comments'=>@$args["CMD_Comments"],
-                    'DocTotal'=>@$Total,'CMD_MetPag'=>@$args['CMD_MetPag'],'CMD_TipEnt'=>@$args['CMD_TipEnt'],'BankCode'=>@$args['BankCode'],'TransDate'=>@$args['TransDate'],
-                    'RefNum'=>@$args['RefNum'],'OINV_Address'=>$OINV_Address,'ODLN_Address'=>$ODLN_Address,'Id_EstPed'=>@$args['Id_EstPed'],
-                    'CMD_FecExpPE'=>date('Y-m-d H:i:s',strtotime(@$args['CMD_FecExpPE'])),'Total_Flete'=>@$args['Precio']
+                    'CMD_Movil'=>@$args['CMD_Movil'],'CMD_Comments'=>@$args['CMD_Comments'],
+                    'DocTotal'=>@$Total,'CMD_MetPag'=>@$args['CMD_MetPag'],'BankCode'=>@$args['BankCode'],'TransDate'=>@$args['TransDate'],
+                    'RefNum'=>@$args['RefNum'],'CMD_TipEnt'=>@$args['CMD_TipEnt'],'OINV_Address'=>$OINV_Address,'ODLN_Address'=>$ODLN_Address,'Id_EstPed'=>@$args['Id_EstPed'],
+                    'CMD_FecExpPE'=>date('Y-m-d H:i:s',strtotime(@$args['CMD_FecExpPE'])),'Total_Flete'=>@$args['Precio'],
+                    'descFleteLima'=>@$args['descFleteLima'],'valorDescFleteLima'=>@$args['valorDescFleteLima']
             ]);
             foreach($args['data'] as $detallePedido){
-                
                 DB::table('cmd_rdr1')
                 ->insert(['DocEntry'=>@$ultimoRegistro+1,'ItemCode'=>@$detallePedido['ItemCode'],
-                'Quantity'=>(Int)@$detallePedido['Quantity'],'Price'=>(Float)@$detallePedido['Price']
+                'Quantity'=>(Int)@$detallePedido['Quantity'],'Price'=>(Float)@$detallePedido['Price'],
+                'descuentoAsignado'=>@$detallePedido['descuentoAsignado'],
+                'precioConDescuentoAsignado'=>@$detallePedido['precioConDescuentoAsignado'],
+                'idDescuentoAsignado'=>@$detallePedido['idDescuentoAsignado']
                 ]);
-
                 $producto_recu=DB::table('cmd_itm1')->where('ItemCode',@$detallePedido['ItemCode'])->first();
-                $actualizar_stock=(Int)$producto_recu->OnHand-(Float)@$detallePedido['Quantity'];
+                $actualizar_stock=(Float)$producto_recu->OnHand-(Float)@$detallePedido['Quantity'];
                 DB::table('cmd_itm1')
                     ->where('ItemCode',@$detallePedido['ItemCode'])
                     ->update([
